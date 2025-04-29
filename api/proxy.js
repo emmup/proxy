@@ -6,12 +6,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Validasi URL (biar tidak sembarangan URL)
+        // Validasi URL
         const parsedUrl = new URL(url);
         if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
             return res.status(400).json({ error: 'Invalid URL protocol.' });
         }
 
+        // Fetch gambar atau resource dari target
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -19,10 +20,9 @@ export default async function handler(req, res) {
         }
 
         const buffer = await response.arrayBuffer();
-
-        // Copy content-type dari original
         const contentType = response.headers.get('content-type') || 'application/octet-stream';
 
+        // Set header agar bisa diakses bebas (CORS)
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', '*');
         res.setHeader('Content-Type', contentType);
